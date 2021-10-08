@@ -5,8 +5,6 @@ const getCopyWords = async(page) => {
         ['topics', 'key_ideas']
     ];
 
-    console.log(choices[page])
-
     try {
         const noProcessData = await fetch(`http://localhost:4000/${choices[page][0]}`);
         const processData = await noProcessData.json();
@@ -62,12 +60,7 @@ const getCopyWords = async(page) => {
             wordsToInsert += '</ul>';
             
             document.querySelector(`body > div#${choices[page][1]}`).innerHTML = wordsToInsert;
-            
-        
-            
-
         }
-        console.log(processData)
     } catch (error) {
         console.log(error.message, error)
     }
