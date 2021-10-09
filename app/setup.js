@@ -16,7 +16,7 @@ const _setUp = (page) => {
 }
 
 const getWords = async(choices, page) => {
-    const fetchData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}`)
+    const fetchData = await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}`)
     const data = await fetchData.json();
     return data
 }
@@ -65,7 +65,7 @@ const events = (choices, page, fetchData) => {
 }
 
 const render = async(choices, page, after) => {
-    const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}`);
+    const noProcessData = await fetch(`https://18.218.26.119:4000/${choices[page][0]}`);
     let processData = await noProcessData.json();
     let _fetchData = [...processData]
     if(after){
@@ -229,7 +229,7 @@ const _formToEdit = (target, choices, page, word, fetchData) => {
 const toAdd = async(page, choices, word) => {
     let includes = false;
     if(word){
-        const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}`);
+        const noProcessData = await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}`);
         const processData = await noProcessData.json();
 
         const selected = document.querySelector('li#addWord > select').value;
@@ -252,7 +252,7 @@ const toAdd = async(page, choices, word) => {
         }
 
         if(textInput && !includes){
-            await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${selected}/${textInput}`, {
+            await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${selected}/${textInput}`, {
                 method: 'POST'
             })
     
@@ -262,7 +262,7 @@ const toAdd = async(page, choices, word) => {
     }else{
         const textInput = document.getElementById('inputAdd');
 
-        const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}`);
+        const noProcessData = await fetch(`https://18.218.26.119:4000/${choices[page][0]}`);
         const processData = await noProcessData.json();
 
         let includes = false;
@@ -285,7 +285,7 @@ const toAdd = async(page, choices, word) => {
         }
 
         if (textInput.value && !includes){
-            await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${textInput.value}`, {
+            await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${textInput.value}`, {
                 method: 'POST'
             })
 
@@ -299,7 +299,7 @@ const toAdd = async(page, choices, word) => {
 const toEdit = async (page, choices, target, li, word) => {
     let includes = false;
     if(word){
-        const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}`);
+        const noProcessData = await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}`);
         const processData = await noProcessData.json();
 
         for (let i = 0; i < processData.length; i++) {
@@ -319,7 +319,7 @@ const toEdit = async (page, choices, target, li, word) => {
         }
 
         if(!includes){
-            await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${target}/${li.children[0].value}/${li.children[1].value}`, {
+            await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${target}/${li.children[0].value}/${li.children[1].value}`, {
                 method: 'PUT'
             })
     
@@ -327,7 +327,7 @@ const toEdit = async (page, choices, target, li, word) => {
         }
 
     }else{
-        const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}`);
+        const noProcessData = await fetch(`https://18.218.26.119:4000/${choices[page][0]}`);
         const processData = await noProcessData.json();
 
         console.log(li.children[0], 'li.children[0]')
@@ -349,7 +349,7 @@ const toEdit = async (page, choices, target, li, word) => {
         }
 
         if(!includes){
-            await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${target}/${li.children[0].value}`, {
+            await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${target}/${li.children[0].value}`, {
                 method: 'PUT'
             })
     
@@ -360,11 +360,11 @@ const toEdit = async (page, choices, target, li, word) => {
 
 const toDelete = async (id, choices, page, word) => {
     if(!word){
-        await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${id}`, {
+        await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${id}`, {
             method: 'DELETE'
         })
     }else{
-        await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${id}`, {
+        await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${id}`, {
             method: 'DELETE'
         })
     }
