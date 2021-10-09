@@ -69,7 +69,7 @@ const render = async(choices, page, after) => {
     let processData = await noProcessData.json();
     let _fetchData = [...processData]
     if(after){
-        let htmlToInsert = '<li id="add">...</li>';
+        let htmlToInsert = '<li id="add"><button>...</button></li>';
         if(page){
             await processData.forEach(data => {
                 htmlToInsert += `<li> ${data.topic_name} <a class="${data.id} edit">Edit</a> <a class="${data.id} delete">Delete</a> </li>`
@@ -81,7 +81,7 @@ const render = async(choices, page, after) => {
         }
         document.querySelector('body > div#setUp > ul').innerHTML = htmlToInsert;
 
-        htmlToInsert = '<li id="addWord">...</li>';
+        htmlToInsert = '<li id="addWord"><button>...</button></li>';
 
         processData = await getWords(choices, page);
 
@@ -98,7 +98,7 @@ const render = async(choices, page, after) => {
         document.querySelector('body > div#setUp > ul.words').innerHTML = htmlToInsert;
 
     }else{
-        let htmlToInsert = `<ul class="${choices[page][0]}"><li id="add">...</li>`
+        let htmlToInsert = `<ul class="${choices[page][0]}"><li id="add"><button>...</button></li>`
     
         if(page){
             await processData.forEach(data => {
@@ -114,7 +114,7 @@ const render = async(choices, page, after) => {
     
         document.querySelector('body > div#setUp').insertAdjacentHTML('beforeend', htmlToInsert);
 
-        htmlToInsert = `<ul class="words"><li id="addWord">...</li>`
+        htmlToInsert = `<ul class="words"><li id="addWord"><button>...</button></li>`
 
         processData = await getWords(choices, page);
     
@@ -133,24 +133,44 @@ const render = async(choices, page, after) => {
         document.querySelector('body > div#setUp').insertAdjacentHTML('beforeend', htmlToInsert);
     }
 
-    document.getElementById('add').addEventListener('click', (event) => {
-        _formToAdd(event.target, page, choices)
+    document.querySelector('li#add > button').addEventListener('click', (event) => {
+        _formToAdd(event.target.parentElement, page, choices)
     })
-    document.getElementById('addWord').addEventListener('click', (event) => {
-        _formToAdd(event.target, page, choices)
+    document.querySelector('li#addWord > button').addEventListener('click', (event) => {
+        console.log('Perro', event.target.parentElement)
+        _formToAdd(event.target.parentElement, page, choices, _fetchData);
     })
     events(choices, page, _fetchData)
 }
 
-const _formToAdd = (event, page, choices) => {
-    const htmlInput = `
-        <input type="text" placeholder="Write new field" id="inputAdd">
-        <input type="button" value="Add new field">`;
+const _formToAdd = (event, page, choices, fetchData) => {
+    let htmlInput = ''
+    if(fetchData){
+        htmlInput += '<select name="selectword">'
+        if (page){
+            fetchData.forEach(item => {
+                htmlInput += `<option value="${item.id}">${item.topic_name}</option>`
+            })
+        }else{
+            fetchData.forEach(item => {
+                htmlInput += `<option value="${item.id}">${item.cw_name}</option>`
+            })
+        }
+        htmlInput += `
+            </select>
+            <input type="text" placeholder="Write new field" id="inputAddWords">
+            <input type="button" value="Add new field">
+            `
+
+    }else{
+        htmlInput += `
+            <input type="text" placeholder="Write new field" id="inputAdd">
+            <input type="button" value="Add new field">`;
+    }
     
     event.innerHTML = htmlInput;
-
-    event.lastChild.addEventListener('click', (e) => {
-        toAdd(page, choices)
+    event.lastElementChild.addEventListener('click', (e) => {
+        toAdd(page, choices, true);
     })
 
 }
@@ -206,39 +226,73 @@ const _formToEdit = (target, choices, page, word, fetchData) => {
     }
 }
 
-const toAdd = async(page, choices) => {
-    const textInput = document.getElementById('inputAdd');
-
-    const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}`);
-    const processData = await noProcessData.json();
-
+const toAdd = async(page, choices, word) => {
     let includes = false;
+    if(word){
+        const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}`);
+        const processData = await noProcessData.json();
 
-    for (let i = 0; i < processData.length; i++) {
-        const element = processData[i];
+        const selected = document.querySelector('li#addWord > select').value;
+        const textInput = document.getElementById('inputAddWords').value;
 
-        if(page){
-            if(element.topic_name == textInput.value){
-                includes = true;
-                break;
+        for (let i = 0; i < processData.length; i++) {
+            const element = processData[i];
+            if(page){
+                if(element.ki_id == selected && element.idea == textInput){
+                    includes = true;
+                    break;
+                }
+            }else{
+                if(element.cw_id == selected && element.word == textInput){
+                    includes = true;
+                    break;
+                }
             }
-        }else{
-            if(element.cw_name == textInput.value){
-                includes = true;
-                break;
-            }
+            
         }
-        
-    }
 
-    if (textInput.value && !includes){
-        await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${textInput.value}`, {
-            method: 'POST'
-        })
+        if(textInput && !includes){
+            await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${selected}/${textInput}`, {
+                method: 'POST'
+            })
+    
+            await render(choices, page, true)
+        }
 
-        await render(choices, page, true)
     }else{
-        console.log('NOPE')
+        const textInput = document.getElementById('inputAdd');
+
+        const noProcessData = await fetch(`http://18.218.26.119:4000/${choices[page][0]}`);
+        const processData = await noProcessData.json();
+
+        let includes = false;
+
+        for (let i = 0; i < processData.length; i++) {
+            const element = processData[i];
+
+            if(page){
+                if(element.topic_name == textInput.value){
+                    includes = true;
+                    break;
+                }
+            }else{
+                if(element.cw_name == textInput.value){
+                    includes = true;
+                    break;
+                }
+            }
+            
+        }
+
+        if (textInput.value && !includes){
+            await fetch(`http://18.218.26.119:4000/${choices[page][0]}/${textInput.value}`, {
+                method: 'POST'
+            })
+
+            await render(choices, page, true)
+        }else{
+            console.log('NOPE')
+        }
     }
 }
 
