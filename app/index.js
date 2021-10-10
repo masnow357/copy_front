@@ -1,3 +1,5 @@
+const apiUrl = 'https://18.218.26.119:4000';
+
 const getCopyWords = async(page) => {
 
     const choices = [
@@ -6,7 +8,7 @@ const getCopyWords = async(page) => {
     ];
 
     try {
-        const noProcessData = await fetch(`https://18.218.26.119:4000/${choices[page][0]}`);
+        const noProcessData = await fetch(`${apiUrl}/${choices[page][0]}`);
         const processData = await noProcessData.json();
 
         let htmlToInsert = `<ul class="${choices[page][0]}">`
@@ -34,7 +36,7 @@ const getCopyWords = async(page) => {
         })
 
         const getWords = async(e) => {
-            const dataWords = await fetch(`https://18.218.26.119:4000/${choices[page][0]}/${choices[page][1]}/${e.target.id}`);
+            const dataWords = await fetch(`${apiUrl}/${choices[page][0]}/${choices[page][1]}/${e.target.id}`);
             const words = await dataWords.json();
             
             let wordsToInsert = `<ul class="${choices[page][1]}">`
