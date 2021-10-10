@@ -1,5 +1,5 @@
 // const apiUrl = 'http://localhost:4000';
-const apiUrl = 'https://18.218.26.119:4000';
+const apiUrl = 'http://18.218.26.119:4000';
 
 
 const getCopyWords = async(page) => {
