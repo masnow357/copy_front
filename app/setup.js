@@ -1,5 +1,3 @@
-const apiUrl = 'https://18.218.26.119:4000';
-
 const _setUp = (page) => {
     const button = document.getElementById('setUp')
 
